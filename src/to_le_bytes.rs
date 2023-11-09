@@ -17,7 +17,7 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
     let expanded = quote! {
         // The generated impl.
-        impl #impl_generics lestream::ToLeBytes for #name #ty_generics #where_clause {
+        impl #impl_generics le_stream::ToLeBytes for #name #ty_generics #where_clause {
             type Iter = #iterator_type;
 
             fn to_le_bytes(&self) -> <Self as ToLeBytes>::Iter {
@@ -34,7 +34,7 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 fn add_trait_bounds(mut generics: Generics) -> Generics {
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(lestream::ToLeBytes));
+            type_param.bounds.push(parse_quote!(le_stream::ToLeBytes));
         }
     }
     generics
@@ -52,11 +52,11 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
                     let item_type = &field.ty;
 
                     iterator_statement.extend(quote! {
-                        .chain(<#item_type as lestream::ToLeBytes>::to_le_bytes(&self.#item_name))
+                        .chain(<#item_type as le_stream::ToLeBytes>::to_le_bytes(&self.#item_name))
                     });
 
                     iterator_type = quote! {
-                        std::iter::Chain<#iterator_type, <#item_type as lestream::ToLeBytes>::Iter>
+                        std::iter::Chain<#iterator_type, <#item_type as le_stream::ToLeBytes>::Iter>
                     };
                 }
 

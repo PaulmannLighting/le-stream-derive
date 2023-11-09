@@ -17,8 +17,8 @@ pub fn from_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
 
     let expanded = quote! {
         // The generated impl.
-        impl #impl_generics lestream::FromLeBytes for #name #ty_generics #where_clause {
-            fn from_le_bytes<T>(bytes: &mut T) -> lestream::Result<Self>
+        impl #impl_generics le_stream::FromLeBytes for #name #ty_generics #where_clause {
+            fn from_le_bytes<T>(bytes: &mut T) -> le_stream::Result<Self>
             where
                 T: Iterator<Item = u8>
             {
@@ -35,7 +35,7 @@ pub fn from_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
 fn add_trait_bounds(mut generics: Generics) -> Generics {
     for param in &mut generics.params {
         if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(lestream::FromLeBytes));
+            type_param.bounds.push(parse_quote!(le_stream::FromLeBytes));
         }
     }
     generics
@@ -53,7 +53,7 @@ fn impl_body(data: &Data) -> TokenStream {
                     let item_type = &field.ty;
 
                     tokens.extend(quote! {
-                            let #item_name = <#item_type as lestream::FromLeBytes>::from_le_bytes(bytes)?;
+                            let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
                         });
 
                     constructor_fields.extend(quote! {
