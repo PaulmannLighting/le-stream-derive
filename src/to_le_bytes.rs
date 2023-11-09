@@ -20,7 +20,7 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         impl #impl_generics le_stream::ToLeBytes for #name #ty_generics #where_clause {
             type Iter = #iterator_type;
 
-            fn to_le_bytes(&self) -> <Self as ToLeBytes>::Iter {
+            fn to_le_bytes(&self) -> <Self as le_stream::ToLeBytes>::Iter {
                 #iterator_statement
             }
         }
