@@ -1,6 +1,7 @@
+use crate::add_trait_bounds;
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields, GenericParam, Generics};
+use syn::{parse_macro_input, parse_quote, Data, DeriveInput, Fields};
 
 pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // Parse the input tokens into a syntax tree.
@@ -9,7 +10,8 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
     // Used in the quasi-quotation below as `#name`.
     let name = input.ident;
 
-    let generics = add_trait_bounds(input.generics);
+    // Add a bound `T: ToLeBytes` to every type parameter T.
+    let generics = add_trait_bounds(input.generics, &parse_quote!(le_stream::ToLeBytes));
     let (impl_generics, ty_generics, where_clause) = generics.split_for_impl();
 
     // Generate an expression to sum up the heap size of each field.
@@ -28,16 +30,6 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 
     // Hand the output tokens back to the compiler.
     proc_macro::TokenStream::from(expanded)
-}
-
-// Add a bound `T: ToLeBytes` to every type parameter T.
-fn add_trait_bounds(mut generics: Generics) -> Generics {
-    for param in &mut generics.params {
-        if let GenericParam::Type(ref mut type_param) = *param {
-            type_param.bounds.push(parse_quote!(le_stream::ToLeBytes));
-        }
-    }
-    generics
 }
 
 fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
@@ -66,7 +58,7 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
                 quote! { std::iter::empty::<u8>() },
                 quote! { std::iter::Empty<u8> },
             ),
-            _ => unimplemented!(),
+            Fields::Unnamed(_) => unimplemented!(),
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),
     }
