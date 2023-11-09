@@ -1,5 +1,5 @@
 [package]
-name = "lestream-derive"
+name = "le-stream-derive"
 version = "0.1.0"
 edition = "2021"
 
