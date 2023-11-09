@@ -64,6 +64,9 @@ fn impl_body(data: &Data) -> TokenStream {
                 tokens.extend(quote! { Ok(Self { #constructor_fields }) });
                 tokens
             }
+            Fields::Unit => {
+                quote! { Ok( Self {} ) }
+            }
             _ => unimplemented!(),
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),

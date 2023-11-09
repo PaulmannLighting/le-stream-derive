@@ -62,6 +62,10 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
 
                 (iterator_statement, iterator_type)
             }
+            Fields::Unit => (
+                quote! { std::iter::empty::<u8>() },
+                quote! { std::iter::Empty<u8> },
+            ),
             _ => unimplemented!(),
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),
