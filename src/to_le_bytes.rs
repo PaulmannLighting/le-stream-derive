@@ -22,7 +22,7 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         impl #impl_generics le_stream::ToLeBytes for #name #ty_generics #where_clause {
             type Iter = #iterator_type;
 
-            fn to_le_bytes(&self) -> <Self as le_stream::ToLeBytes>::Iter {
+            fn to_le_bytes(self) -> <Self as le_stream::ToLeBytes>::Iter {
                 #iterator_statement
             }
         }
@@ -44,7 +44,7 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
                     let item_type = &field.ty;
 
                     iterator_statement.extend(quote! {
-                        .chain(<#item_type as le_stream::ToLeBytes>::to_le_bytes(&self.#item_name))
+                        .chain(<#item_type as le_stream::ToLeBytes>::to_le_bytes(self.#item_name))
                     });
 
                     iterator_type = quote! {
