@@ -33,12 +33,12 @@ pub fn to_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
 }
 
 fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
+    let mut iterator_type = quote! { std::iter::Empty<u8> };
+    let mut iterator_statement = quote! { std::iter::empty::<u8>() };
+
     match *data {
         Data::Struct(ref structure) => match structure.fields {
             Fields::Named(ref fields) => {
-                let mut iterator_type = quote! { std::iter::Empty<u8> };
-                let mut iterator_statement = quote! { std::iter::empty::<u8>() };
-
                 for field in &fields.named {
                     let item_name = field.ident.clone().expect("struct field has no name");
                     let item_type = &field.ty;
@@ -54,10 +54,7 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
 
                 (iterator_statement, iterator_type)
             }
-            Fields::Unit => (
-                quote! { std::iter::empty::<u8>() },
-                quote! { std::iter::Empty<u8> },
-            ),
+            Fields::Unit => (iterator_statement, iterator_type),
             Fields::Unnamed(_) => unimplemented!(),
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),

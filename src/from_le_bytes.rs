@@ -34,12 +34,12 @@ pub fn from_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
 }
 
 fn impl_body(data: &Data) -> TokenStream {
+    let mut tokens = TokenStream::new();
+    let mut constructor_fields = TokenStream::new();
+
     match *data {
         Data::Struct(ref structure) => match structure.fields {
             Fields::Named(ref fields) => {
-                let mut tokens = TokenStream::new();
-                let mut constructor_fields = TokenStream::new();
-
                 for field in &fields.named {
                     let item_name = field.ident.clone().expect("struct field has no name");
                     let item_type = &field.ty;
