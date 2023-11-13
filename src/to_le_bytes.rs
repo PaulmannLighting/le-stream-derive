@@ -55,7 +55,21 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
                 (iterator_statement, iterator_type)
             }
             Fields::Unit => (iterator_statement, iterator_type),
-            Fields::Unnamed(_) => unimplemented!(),
+            Fields::Unnamed(ref fields) => {
+                for (index, field) in fields.unnamed.iter().enumerate() {
+                    let item_type = &field.ty;
+
+                    iterator_statement.extend(quote! {
+                        .chain(<#item_type as le_stream::ToLeBytes>::to_le_bytes(self.#index))
+                    });
+
+                    iterator_type = quote! {
+                        std::iter::Chain<#iterator_type, <#item_type as le_stream::ToLeBytes>::Iter>
+                    };
+                }
+
+                (iterator_statement, iterator_type)
+            }
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),
     }

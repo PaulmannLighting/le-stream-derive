@@ -59,7 +59,23 @@ fn impl_body(data: &Data) -> TokenStream {
             Fields::Unit => {
                 quote! { Ok( Self {} ) }
             }
-            Fields::Unnamed(_) => unimplemented!(),
+            Fields::Unnamed(ref fields) => {
+                for (index, field) in fields.unnamed.iter().enumerate() {
+                    let item_name = format!("field_{index}");
+                    let item_type = &field.ty;
+
+                    tokens.extend(quote! {
+                            let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
+                        });
+
+                    constructor_fields.extend(quote! {
+                        #item_name,
+                    });
+                }
+
+                tokens.extend(quote! { Ok(Self(#constructor_fields)) });
+                tokens
+            }
         },
         Data::Enum(_) | Data::Union(_) => unimplemented!(),
     }
