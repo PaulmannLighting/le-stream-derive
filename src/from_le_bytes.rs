@@ -22,7 +22,7 @@ pub fn from_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
         impl #impl_generics le_stream::FromLeBytes for #name #ty_generics #where_clause {
             fn from_le_bytes<T>(bytes: &mut T) -> le_stream::Result<Self>
             where
-                T: Iterator<Item = u8>
+                T: std::iter::Iterator<Item = u8>
             {
                 #body
             }
