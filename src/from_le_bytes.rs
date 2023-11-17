@@ -36,8 +36,8 @@ fn impl_body(data: &Data) -> TokenStream {
                     let item_type = &field.ty;
 
                     tokens.extend(quote! {
-                            let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
-                        });
+                        let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
+                    });
 
                     constructor_fields.extend(quote! {
                         #item_name,
@@ -56,8 +56,8 @@ fn impl_body(data: &Data) -> TokenStream {
                     let item_type = &field.ty;
 
                     tokens.extend(quote! {
-                            let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
-                        });
+                        let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
+                    });
 
                     constructor_fields.extend(quote! {
                         #item_name,
