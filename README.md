@@ -1,5 +1,5 @@
 # le-stream-derive
-derive macros for le-stream
+Derive macros for le-stream
 
 ## Contribution guidelines
 * Use `cargo fmt`
