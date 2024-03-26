@@ -11,7 +11,10 @@ pub fn from_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let body = impl_body(&input.data);
     let expanded = quote! {
         impl #impl_generics le_stream::FromLeBytes for #name #ty_generics #where_clause {
-            fn from_le_bytes(bytes: &mut impl ::std::iter::Iterator<Item = u8>) -> ::le_stream::Result<Self> {
+            fn from_le_bytes<__LeStreamBytesIterator>(bytes: &mut __LeStreamBytesIterator) -> ::le_stream::Result<Self>
+            where
+                __LeStreamBytesIterator: ::std::iter::Iterator<Item = u8>
+            {
                 #body
             }
         }
