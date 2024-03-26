@@ -48,6 +48,7 @@ fn impl_body(data: &Data) -> (TokenStream, TokenStream) {
             Fields::Unnamed(ref fields) => {
                 for (index, field) in fields.unnamed.iter().enumerate() {
                     let item_type = &field.ty;
+                    let index = syn::Index::from(index);
 
                     iterator_statement.extend(quote! {
                         .chain(<#item_type as ::le_stream::ToLeBytes>::to_le_bytes(self.#index))
