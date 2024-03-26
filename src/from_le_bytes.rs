@@ -11,9 +11,9 @@ pub fn from_le_bytes(input: proc_macro::TokenStream) -> proc_macro::TokenStream 
     let body = impl_body(&input.data);
     let expanded = quote! {
         impl #impl_generics le_stream::FromLeBytes for #name #ty_generics #where_clause {
-            fn from_le_bytes<T>(bytes: &mut T) -> le_stream::Result<Self>
+            fn from_le_bytes<T>(bytes: &mut T) -> ::le_stream::Result<Self>
             where
-                T: std::iter::Iterator<Item = u8>
+                T: ::std::iter::Iterator<Item = u8>
             {
                 #body
             }
@@ -35,7 +35,7 @@ fn impl_body(data: &Data) -> TokenStream {
                     let item_type = &field.ty;
 
                     tokens.extend(quote! {
-                        let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
+                        let #item_name = <#item_type as ::le_stream::FromLeBytes>::from_le_bytes(bytes)?;
                     });
 
                     constructor_fields.extend(quote! {
@@ -55,7 +55,7 @@ fn impl_body(data: &Data) -> TokenStream {
                     let item_type = &field.ty;
 
                     tokens.extend(quote! {
-                        let #item_name = <#item_type as le_stream::FromLeBytes>::from_le_bytes(bytes)?;
+                        let #item_name = <#item_type as ::le_stream::FromLeBytes>::from_le_bytes(bytes)?;
                     });
 
                     constructor_fields.extend(quote! {
